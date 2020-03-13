@@ -10,9 +10,7 @@ pipeline {
 		stage('build docker image') {
             steps {
 				echo "BUILD DOCKER IMAGE"
-                script {
-             		docker build -t pokeman:1.0 .
-                }
+                sh label: '', script: 'docker build -t pokeman:1.0 .'
             }
         }
     }
