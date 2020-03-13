@@ -11,6 +11,13 @@ pipeline {
             steps {
 				echo "BUILD DOCKER IMAGE"
                 sh label: '', script: 'docker build -t pokeman:1.0 .'
+				sh label: '', script: 'docker exec it npm test'
+            }
+        }
+		stage('TEST IMAGE') {
+            steps {
+				echo "TEST IMAGE"
+				sh label: '', script: 'docker exec it npm test'
             }
         }
     }
