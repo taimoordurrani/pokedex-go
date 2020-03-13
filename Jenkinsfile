@@ -1,23 +1,31 @@
 pipeline {
     agent any
+    
     stages {
-        stage('checkout') {
+        stage("checkout") {
             steps {
-                echo "STEP CHECKOUT"
-                checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/taimoordurrani/pokedex-go.git']]])
+                checkout scm
             }
         }
-		stage('build docker image') {
+        
+        stage("build") {
             steps {
-				echo "BUILD DOCKER IMAGE"
-                sh label: '', script: 'docker build -t pokeman:1.0 .'
-				sh label: '', script: 'docker exec it npm test'
+                docker.build("pokedex:${env.BUILD_ID}")
             }
         }
-		stage('TEST IMAGE') {
+    
+        stage("test") {
+            agent {
+                docker { image "pokedex:${env.BUILD_ID}" }
+            }
             steps {
-				echo "TEST IMAGE"
-				sh label: '', script: 'docker run pokeman npm test'
+                sh "npm test"
+            }
+        }
+​
+        stage("deploy") {
+            steps {
+                sh """docker run -d pokedex:${env.BUILD_ID} -p 5555"""
             }
         }
     }
