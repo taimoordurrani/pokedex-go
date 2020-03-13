@@ -17,7 +17,7 @@ pipeline {
 		stage('TEST IMAGE') {
             steps {
 				echo "TEST IMAGE"
-				sh label: '', script: 'docker exec it npm test'
+				sh label: '', script: 'docker exec -it npm test'
             }
         }
     }
